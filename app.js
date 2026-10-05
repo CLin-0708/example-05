@@ -6,7 +6,14 @@ const list = document.querySelector('#task-list');
 const filters = document.querySelector('.filters');
 
 let currentFilter = 'all'; // all / active / done
-let tasks = [];
+
+// 从 localStorage 恢复数据，使用 || '[]' 避免首次访问时为 null 导致报错
+let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+
+// 持久化保存函数：将状态数组序列化为 JSON 字符串保存到本地
+const save = () => {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+};
 
 const render = () => {
   list.innerHTML = '';
@@ -25,8 +32,9 @@ const render = () => {
     li.textContent = task.text;
     if (task.done) li.classList.add('done');
     li.addEventListener('click', () => {
-      task.done = !task.done;    // 切换状态：改的是数组里的对象
-      render();
+      task.done = !task.done;    // 切换状态：修改数组中的对象
+      save();                    // 数据修改后立即本地持久化
+      render();                  // 统一重绘界面
     });
 
     // 补充删除按钮（对应讲义中已定义的 .del 样式及删除功能）
@@ -35,11 +43,12 @@ const render = () => {
     delSpan.className = 'del';
     delSpan.title = '删除任务';
     delSpan.addEventListener('click', (e) => {
-      e.stopPropagation(); // 阻止冒泡，避免触发 li 的完成切换
+      e.stopPropagation();       // 阻止事件冒泡，避免触发 li 的完成切换
       const idx = tasks.indexOf(task);
       if (idx !== -1) {
-        tasks.splice(idx, 1);
-        render();
+        tasks.splice(idx, 1);    // 先改数组
+        save();                  // 再保存
+        render();                // 再重绘界面
       }
     });
     li.appendChild(delSpan);
@@ -56,6 +65,7 @@ form.addEventListener('submit', (e) => {
     return;
   }
   tasks.push({ text: text, done: false });
+  save();                        // 添加任务后持久化保存
   tip.textContent = '';
   input.value = '';
   render();
