@@ -7,8 +7,9 @@
   <style>
     * { box-sizing: border-box; }
     body { font-family: sans-serif; max-width: 480px; margin: 24px auto; padding: 0 16px; }
+    li { margin: 8px 0; cursor: pointer; }
     li.done { text-decoration: line-through; color: #999; }
-    .del { margin-left: 12px; cursor: pointer; }
+    .del { margin-left: 12px; cursor: pointer; color: #c00; font-weight: bold; }
     .tip { color: #c00; font-size: 14px; min-height: 20px; }
     .filters { margin: 12px 0; }
     .filters button { margin-right: 8px; }
@@ -21,6 +22,11 @@
     <button type="submit">添加</button>
   </form>
   <p class="tip" id="tip"></p>
+  <div class="filters">
+    <button data-filter="all">全部</button>
+    <button data-filter="active">未完成</button>
+    <button data-filter="done">已完成</button>
+  </div>
   <ul id="task-list"></ul>
   <script src="app.js"></script>
 </body>
